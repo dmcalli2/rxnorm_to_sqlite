@@ -37,7 +37,7 @@ CREATE TABLE RXNCONSO
    SDUI              varchar (50),
    SAB               varchar (20) NOT NULL,
    TTY               varchar (20) NOT NULL,
-   CODE              varchar (50) NOT NULL,
+   CODE              varchar (50),
    STR               varchar (3000) NOT NULL,
    SRL               varchar (10),
    SUPPRESS          varchar (1),
