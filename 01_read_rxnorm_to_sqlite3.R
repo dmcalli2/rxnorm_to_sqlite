@@ -36,6 +36,7 @@ for (i in tablename) {
 table_fields_count <- sapply(table_fields, length)
 
 ## read in all dataframes
+## and write dataframes to RSQLITE
 for (i in 1:length(tablename)){
   print(tablename[i])
   print(paste0(table_fields_count[i], " columns"))
@@ -44,18 +45,13 @@ for (i in 1:length(tablename)){
                       col_names = FALSE,
                       col_types = paste(c(rep("c", table_fields_count[i]), "_"), collapse = ""))
   mydf <- as.data.frame(mydf)
-  # dbWriteTable(con, name = tablename[i], value = mydf, append = TRUE)
-  # rm(mydf)
-  mydf
+  names(mydf) <- table_fields[[i]]
+  dbWriteTable(con, name = tablename[i], value = mydf, append = TRUE)
+  rm(mydf)
 }
 
-## write dataframes to RSQLITE
-
-
 # Run script to add indices
-dbSendQueries(con, sqlFromFile("rrf/Indexes_mysql_rxn.sql") )
-
+dbSendQueries(con, sqlFromFile("Indexes_mysql_rxn.sql") )
 dbGetQuery(con, "SELECT * FROM sqlite_master WHERE type = 'index'")
-## Only one with problems, and fairly trivial, 7 unexpected escapes
 dbDisconnect(con)
 
