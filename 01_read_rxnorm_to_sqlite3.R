@@ -37,11 +37,12 @@ table_fields_count <- sapply(table_fields, length)
 
 ## read in all dataframes
 ## and write dataframes to RSQLITE
+zipfilename <- "RxNorm_full_10062025.zip"
 for (i in 1:length(tablename)){
   print(tablename[i])
   print(paste0(table_fields_count[i], " columns"))
   # Need to read empty column as ends ina  pipe
-  mydf <- read_delim (unz("rrf.zip", paste0("rrf/", tablename[i], ".RRF")), delim = "|",
+  mydf <- read_delim (unz(zipfilename, paste0("rrf/", tablename[i], ".RRF")), delim = "|",
                       col_names = FALSE,
                       col_types = paste(c(rep("c", table_fields_count[i]), "_"), collapse = ""))
   mydf <- as.data.frame(mydf)
@@ -51,7 +52,8 @@ for (i in 1:length(tablename)){
 }
 
 # Run script to add indices
-dbSendQueries(con, sqlFromFile("Indexes_mysql_rxn.sql") )
+# dbSendQueries(con, sqlFromFile("Indexes_mysql_rxn.sql") )
+dbSendQueries(con, sqlFromFile(unz(zipfilename, "scripts/mysql/Indexes_mysql_rxn.sql")) )
 dbGetQuery(con, "SELECT * FROM sqlite_master WHERE type = 'index'")
 dbDisconnect(con)
 
